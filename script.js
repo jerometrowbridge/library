@@ -10,18 +10,20 @@ function Book(title, author, pages, haveRead) {
     this.haveRead = haveRead;
 
     this.info = function() {
-        return `<p>
-        <ul>
-        <li>Title: ${this.title}</li>
-        <li>Author: ${this.author}</li>
-        <li># of Pages: ${this.pages}</li>
-        <li>Status: ${haveRead}</li></ul></p>`
+        return `
+        <ul class="card-contents">
+        <li class="row-title">Title: ${this.title}</li>
+        <li class="row-author">Author: ${this.author}</li>
+        <li class="row-pages"># of Pages: ${this.pages}</li>
+        <li class="row-read">Status: ${this.haveRead}</li></ul>`
     };
 }
 
-let bookOne = new Book("The Juror", "John Grisham", 200, "read");
-let bookTwo = new Book("The Lord of the Rings", "JRR Tolkien", 400, "read");
-let bookThree = new Book("The Sun Also Rises", "Ernest Hemingway", 150, "have not read");
+
+
+// let bookOne = new Book("The Juror", "John Grisham", 200, "read");
+// let bookTwo = new Book("The Lord of the Rings", "JRR Tolkien", 400, "read");
+// let bookThree = new Book("The Sun Also Rises", "Ernest Hemingway", 150, "have not read");
 
 function addBookToLibrary(b) {
     myLibrary.push(b);
@@ -33,15 +35,42 @@ addBookToLibrary(bookThree);
 
 function getBooks(library) {
     cardContainer.innerHTML = "";
-    for (const book of library) {
-
+    for (let index = 0; index < myLibrary.length; index++) {
+        const book = myLibrary[index];
         const card = document.createElement("div");
         card.classList.add("card");
-        card.innerHTML = `<p>${book.info()}</p>`;
+        card.dataset.index = index;
+        card.innerHTML = `${book.info()}
+        <button class="remove-button">Remove</button>
+        <button class="read-button">Read?</button>`;
+
+        const removeButton = card.querySelector(".remove-button");
+        removeButton.addEventListener("click", () => removeBook(index));   
+        
+        const readButton = card.querySelector(".read-button");
+        readButton.addEventListener("click", () => changeBookReadStatus(index));
 
         cardContainer.appendChild(card);
     }
 }
+
+
+function removeBook(index) {
+    myLibrary.splice(index, 1);
+    getBooks(myLibrary);
+}
+
+function changeBookReadStatus(index) {
+    const book = myLibrary[index];
+    
+    if (book.haveRead === "read") {
+        book.haveRead = "not read";
+    } else {
+        book.haveRead = "read";
+    }
+    getBooks(myLibrary);
+}
+
 
 btn.addEventListener("click", () => getBooks(myLibrary));
 
@@ -81,3 +110,4 @@ form.addEventListener("submit", (event) => {
     alert("Book added!");
     modal.style.display = "none";
 })
+
